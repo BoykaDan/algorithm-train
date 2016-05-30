@@ -1,124 +1,31 @@
-#include <iostream>
-#include <algorithm>
-#include <cstdio>
-#include <cstring>
-#include <utility>
-#include <vector>
-#include <queue>
+#include<cstdio>
+#include<cstring>
+#include "iostream"
+
 using namespace std;
-#define INF 0x3f3f3f3f
-#define maxn 111111
-
-typedef long long LL;
-
-int nxt[maxn], pre[maxn];
-
-void init (int n)
+const int maxn=20;
+bool s[1<<maxn];	//最大结点个数
+int main()
 {
-    for (int i = 1; i<= n; i++) {
-        pre[i] = i-1 ;
-        nxt[i] = i+1 ;
-        
-    }
-    pre[0] = n;
-    nxt[n] = 0;
-    nxt[0] = 1;
-}
-
-void link(int l,int r)
-{
-    pre[r] = l;
-    nxt[l] = r;
-    
-}
-
-int main ()
-{
-    int n,m,kase = 0;
-    while ( scanf("%d %d",&n ,&m) != EOF)
+    int D,I,k,n,N;
+    while(scanf("%d",&N)==1&&N!=-1)
+	{
+    while(N--&&scanf("%d%d",&D,&I)==2)
     {
-        int rev = 0;
-        init(n);
-        while (m--)
+        memset(s,0,sizeof(s));	//开关置关闭
+        n=(1<<D)-1;		//具体最大结点数
+        for(int i=0;i<I;i++)
         {
-            int op,x,y;
-            scanf("%d",&op);
-            if (op == 4) {
-                rev = !rev;
-            }
-            else
+            k=1;
+            while(1)
             {
-                scanf("%d %d ",&x,&y);
-                if ((op == 1 || op == 2)&&rev) {
-                    op = 3 - op;
-                    
-                }
-                if (op == 3 && nxt[y] == x) {
-                    swap(x, y);
-                }
-                int lx,rx,ly,ry;
-                lx = pre[x];
-                rx = nxt[x];
-                ly = pre[y];
-                ry = nxt[y];
-                if (op == 1) {
-                    if (nxt[x]==y) {
-                        continue;
-                    }
-                    else{
-                        link(lx, rx);
-                        link(ly,x);
-                        link(x,y);
-                    }
-                }
-                else if (op == 2)
-                {
-                    if (nxt[y]==x) continue;
-                    link(lx, rx);
-                    link(x, ry);
-                    link(y, x);
-                }
-                else
-                {
-                    if (nxt[x] == y)
-                    {
-                        link(lx, y);
-                        link(y, x);
-                        link(x, ry);
-                    }
-                    else
-                    {
-                        link(lx, y);
-                        link(y, rx);
-                        link(ly, x);
-                        link(x, ry);
-                    }
-                }
-                
+                s[k]=!s[k];	//改变开关状态
+                k=s[k]?2*k:2*k+1;	//因为已改变开关状态，所以如此
+                if(k>n)break;	//越界跳出
             }
         }
-        if (rev) {
-            for (int i = 0; i<= n; i++) {
-                swap(pre[i], nxt[i]);
-            }
-            int pos;
-            for (int i = 1; i <= n; i++) {
-                if (pre[i] == 0) {
-                    pos = i;
-                    break;
-                }
-            }
-            int cnt = 1;
-            LL ans = 0;
-            while (pos != 0) {
-                if (cnt & 1) ans += pos;
-                pos = nxt[pos];
-                cnt++;
-
-            }
-            printf("Case %d: %lld\n", ++kase,ans);
-
-        }
+        printf("%d\n",k/2);
     }
+	}
     return 0;
 }
